@@ -36,7 +36,11 @@ public class TestJunit {
         member.setBirthday(new Date());
         member.setPhone(this.phone);
         IMemberService memberService = ServiceFactory.getMemberServiceInstance();
-        TestCase.assertTrue(memberService.add(member));
+        try{
+            TestCase.assertTrue(memberService.add(member));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     @Test
     public void testEdit(){
@@ -51,31 +55,52 @@ public class TestJunit {
         member.setBirthday(new Date());
         member.setPhone(this.phone);
         IMemberService memberService = ServiceFactory.getMemberServiceInstance();
-        TestCase.assertTrue(memberService.edit(member));
+        try{
+            TestCase.assertTrue(memberService.edit(member));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     @Test
     public void testRemove(){
         Set<String> ids = new HashSet<>();
-        ids.add("1231");
+        ids.add("659834");
         IMemberService memberService = ServiceFactory.getMemberServiceInstance();
-        TestCase.assertTrue(memberService.removeById(ids));
+        try{
+            TestCase.assertTrue(memberService.removeById(ids));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     @Test
     public void testGet(){
         IMemberService memberService = ServiceFactory.getMemberServiceInstance();
-        TestCase.assertNotNull(memberService.get("1231"));
+        try{
+            TestCase.assertNotNull(memberService.get("1231"));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     @Test
     public void testList(){
         IMemberService memberService = ServiceFactory.getMemberServiceInstance();
-        TestCase.assertTrue(memberService.list().size() > 0);
+        try{
+            TestCase.assertTrue(memberService.list().size() > 0);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     @Test
     public void testSplit(){
         IMemberService memberService = ServiceFactory.getMemberServiceInstance();
-        Map<String, Object> resultMap = memberService.split(1, 10, null, null);
-        List<Member> list = (List<Member>) resultMap.get("allMembers");
-        long len = (Long) resultMap.get("allMembersCount");
-        TestCase.assertTrue(list.size() > 0 && len != 0);
+        try{
+            Map<String, Object> resultMap = memberService.split(1, 10, null, null);
+            List<Member> list = (List<Member>) resultMap.get("allMembers");
+            long len = (Long) resultMap.get("allMembersCount");
+            TestCase.assertTrue(list.size() > 0 && len != 0);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

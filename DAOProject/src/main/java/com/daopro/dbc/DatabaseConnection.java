@@ -11,14 +11,16 @@ public class DatabaseConnection {
     private static final String DBURL = "jdbc:oracle:thin:@localhost:1521:ORCL";
     private static final String DBUSER = "c##tanxupeng";
     private static final String DBPASSWORD = "19930716_Tan";
-    private Connection conn; // 数据库连接对象
+    private static final ThreadLocal<Connection> CONNECTION_THREAD_LOCAL = new ThreadLocal<>();
     /**
      * 初始化数据库连接驱动服务
      */
-    public DatabaseConnection(){
+    private DatabaseConnection(){}
+    public static void rebuildThreadLocal(){
         try{
             Class.forName(DBDRIVER);
-            this.conn = DriverManager.getConnection(DBURL, DBUSER, DBPASSWORD);
+            Connection conn = DriverManager.getConnection(DBURL, DBUSER, DBPASSWORD);
+            CONNECTION_THREAD_LOCAL.set(conn);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -27,17 +29,28 @@ public class DatabaseConnection {
      * 获取数据库的连接对象
      * @return
      */
-    public Connection getConn(){
-        return this.conn;
+    public static Connection getConn(){
+        Connection conn = CONNECTION_THREAD_LOCAL.get();
+        if(conn == null){
+            rebuildThreadLocal();
+            conn = CONNECTION_THREAD_LOCAL.get();
+        }
+        return conn;
     }
 
     /**
      * 负责关闭数据库
      */
-    public void close(){
+    public static void close(){
         try{
-            if(this.conn != null){
-                this.conn.close();
+            Connection conn = CONNECTION_THREAD_LOCAL.get();
+            if(conn != null){
+                try{
+                    conn.close();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                CONNECTION_THREAD_LOCAL.remove();
             }
         }catch(Exception e){
             e.printStackTrace();

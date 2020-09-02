@@ -17,6 +17,10 @@ public class TestMain {
         member.setEmail("2961363297@qq.com");
         member.setBirthday(new Date());
         IMemberService memberService = ServiceFactory.getMemberServiceInstance();
-        System.out.println(memberService.add(member));
+        try{
+            System.out.println(memberService.add(member));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }

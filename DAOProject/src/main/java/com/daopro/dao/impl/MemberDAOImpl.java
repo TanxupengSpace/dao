@@ -4,7 +4,6 @@ import com.daopro.dao.IMemberDAO;
 import com.daopro.util.AbstractDAO;
 import com.daopro.vo.Member;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,9 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
-    public MemberDAOImpl(Connection conn){
-        super(conn);
-    }
     @Override
     public boolean doCreate(Member vo) throws SQLException {
         String sql = "INSERT INTO member(mid, name, age, email, sex, birthday, note, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -48,12 +44,12 @@ public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
 
     @Override
     public boolean doRemove(Set<String> ids) throws SQLException {
-        StringBuffer sql = new StringBuffer();
-        sql.append("DELETE FROM member WHERE mid IN (");
-        ids.forEach(id->{
+        StringBuffer sql = new StringBuffer(30);
+        sql.append("DELETE FROM member WHERE mid IN ( ");
+        ids.forEach((id) -> {
             sql.append("?,");
         });
-        sql.delete(sql.length(), sql.length() - 1).append(")");
+        sql.delete(sql.length() - 1, sql.length()).append(")");
         super.pstmt = super.conn.prepareStatement(sql.toString());
         Iterator<String> iter = ids.iterator();
         int foot = 1;
