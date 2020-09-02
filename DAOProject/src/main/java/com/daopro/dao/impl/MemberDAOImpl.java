@@ -33,7 +33,7 @@ public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
 
     @Override
     public boolean doEdit(Member vo) throws SQLException {
-        String sql = "UPDATE member SET name=?, age=?, email=?, sex=?, birthday=?, note=? WHERE mid=?";
+        String sql = "UPDATE member SET name=?, age=?, email=?, sex=?, birthday=?, note=?, phone=? WHERE mid=?";
         super.pstmt = super.conn.prepareStatement(sql);
         super.pstmt.setString(1,vo.getName());
         super.pstmt.setInt(2,vo.getAge());
@@ -41,9 +41,8 @@ public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
         super.pstmt.setString(4,vo.getSex());
         super.pstmt.setDate(5,new java.sql.Date(vo.getBirthday().getTime()));
         super.pstmt.setString(6,vo.getNote());
-        super.pstmt.setString(7, vo.getMid());
-        super.pstmt.setString(7,vo.getNote());
-        super.pstmt.setString(8, vo.getPhone());
+        super.pstmt.setString(7, vo.getPhone());
+        super.pstmt.setString(8, vo.getMid());
         return super.pstmt.executeUpdate() > 0;
     }
 
@@ -157,10 +156,10 @@ public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
         List<Member> memberList = new ArrayList<>();
         String sql = "SELECT * FROM (" +
                 " SELECT mid, name, age, email, sex, birthday, note, phone, ROWNUM rn FROM member WHERE " +
-                " " + column + " LIKE ? AND ROWNUM <=?)" +
+                column + " LIKE ? AND ROWNUM <=?)" +
                 " temp WHERE temp.rn >=?";
         super.pstmt = super.conn.prepareStatement(sql);
-        super.pstmt.setString(1, keyWord);
+        super.pstmt.setString(1, "%" + keyWord + "%");
         super.pstmt.setInt(2, currentPage * lineSize);
         super.pstmt.setInt(3, (currentPage - 1) * lineSize);
         ResultSet rs = super.pstmt.executeQuery();
@@ -194,6 +193,7 @@ public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
     public Long countMembers(String column, String keyWord) throws SQLException{
         String sql = "SELECT COUNT(*) FROM member WHERE " + column + " LIKE ?";
         super.pstmt = super.conn.prepareStatement(sql);
+        super.pstmt.setString(1,"%" + keyWord + "%");
         ResultSet rs = super.pstmt.executeQuery();
         if(rs.next()){
             return rs.getLong(1);
