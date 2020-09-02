@@ -1,7 +1,7 @@
 package com.daopro.service.impl;
 
 import com.daopro.dao.IMemberDAO;
-import com.daopro.factory.DAOFactory;
+import com.daopro.factory.ObjectFactory;
 import com.daopro.service.IMemberService;
 import com.daopro.vo.Member;
 
@@ -20,7 +20,7 @@ public class MemberServiceImpl implements IMemberService{
         if(!(vo.getSex().equals("男") || vo.getSex().equals("女"))){
             return false;
         }
-        IMemberDAO memberDAO = DAOFactory.getIMemberDAOInstance();
+        IMemberDAO memberDAO = ObjectFactory.getDAOInstance("member.dao", IMemberDAO.class);
         if(memberDAO.findById(vo.getMid()) == null){
             if(memberDAO.findByPhone(vo.getPhone()) == null){
                 flag = memberDAO.doCreate(vo);
@@ -38,7 +38,7 @@ public class MemberServiceImpl implements IMemberService{
         if(!(vo.getSex().equals("男") || vo.getSex().equals("女"))){
             return false;
         }
-        IMemberDAO memberDAO = DAOFactory.getIMemberDAOInstance();
+        IMemberDAO memberDAO = ObjectFactory.getDAOInstance("member.dao", IMemberDAO.class);
         flag = memberDAO.doEdit(vo);
         return flag;
     }
@@ -49,7 +49,7 @@ public class MemberServiceImpl implements IMemberService{
         if(ids.size() == 0){
             return flag;
         }
-        IMemberDAO memberDAO = DAOFactory.getIMemberDAOInstance();
+        IMemberDAO memberDAO = ObjectFactory.getDAOInstance("member.dao", IMemberDAO.class);
         flag = memberDAO.doRemove(ids);
         return flag;
     }
@@ -57,7 +57,7 @@ public class MemberServiceImpl implements IMemberService{
     @Override
     public Member get(String id) throws Exception {
         if(id != null || !("".equals(id))) {
-            IMemberDAO memberDAO = DAOFactory.getIMemberDAOInstance();
+            IMemberDAO memberDAO = ObjectFactory.getDAOInstance("member.dao", IMemberDAO.class);
             return memberDAO.findById(id);
         }
         return null;
@@ -65,13 +65,13 @@ public class MemberServiceImpl implements IMemberService{
 
     @Override
     public List<Member> list() throws Exception {
-        return DAOFactory.getIMemberDAOInstance().findAll();
+        return ObjectFactory.getDAOInstance("member.dao", IMemberDAO.class).findAll();
     }
 
     @Override
     public Map<String, Object> split(int currentPage, int lineSize, String column, String keyWord) throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
-        IMemberDAO memberDAO = DAOFactory.getIMemberDAOInstance();
+        IMemberDAO memberDAO = ObjectFactory.getDAOInstance("member.dao", IMemberDAO.class);
         if(column == null || "".equals(column) || keyWord == null || "".equals(keyWord)){
             map.put("allMembers", memberDAO.findSplit(currentPage, lineSize));
             map.put("allMembersCount", memberDAO.countMembers());

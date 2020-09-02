@@ -6,6 +6,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+/**
+ * 业务层代理类
+ */
 public class ServiceProxy implements InvocationHandler {
     private static final String METHOD_NAME_TRASACTION[] = {"add", "create", "edit", "update", "delete", "remove"};
     private Object target;

@@ -1,6 +1,6 @@
 package com.daopro.test.junit;
 
-import com.daopro.factory.ServiceFactory;
+import com.daopro.factory.ObjectFactory;
 import com.daopro.service.IMemberService;
 import com.daopro.vo.Member;
 import junit.framework.TestCase;
@@ -35,7 +35,7 @@ public class TestJunit {
         member.setEmail(this.email);
         member.setBirthday(new Date());
         member.setPhone(this.phone);
-        IMemberService memberService = ServiceFactory.getMemberServiceInstance();
+        IMemberService memberService = ObjectFactory.getServiceInstance("member.service", IMemberService.class);
         try{
             TestCase.assertTrue(memberService.add(member));
         }catch(Exception e){
@@ -54,7 +54,7 @@ public class TestJunit {
         member.setEmail(this.email);
         member.setBirthday(new Date());
         member.setPhone(this.phone);
-        IMemberService memberService = ServiceFactory.getMemberServiceInstance();
+        IMemberService memberService = ObjectFactory.getServiceInstance("member.service", IMemberService.class);
         try{
             TestCase.assertTrue(memberService.edit(member));
         }catch(Exception e){
@@ -64,8 +64,8 @@ public class TestJunit {
     @Test
     public void testRemove(){
         Set<String> ids = new HashSet<>();
-        ids.add("659834");
-        IMemberService memberService = ServiceFactory.getMemberServiceInstance();
+        ids.add("06754");
+        IMemberService memberService = ObjectFactory.getServiceInstance("member.service", IMemberService.class);
         try{
             TestCase.assertTrue(memberService.removeById(ids));
         }catch(Exception e){
@@ -74,7 +74,7 @@ public class TestJunit {
     }
     @Test
     public void testGet(){
-        IMemberService memberService = ServiceFactory.getMemberServiceInstance();
+        IMemberService memberService = ObjectFactory.getServiceInstance("member.service", IMemberService.class);
         try{
             TestCase.assertNotNull(memberService.get("1231"));
         }catch(Exception e){
@@ -83,7 +83,7 @@ public class TestJunit {
     }
     @Test
     public void testList(){
-        IMemberService memberService = ServiceFactory.getMemberServiceInstance();
+        IMemberService memberService = ObjectFactory.getServiceInstance("member.service", IMemberService.class);
         try{
             TestCase.assertTrue(memberService.list().size() > 0);
         }catch(Exception e){
@@ -92,7 +92,7 @@ public class TestJunit {
     }
     @Test
     public void testSplit(){
-        IMemberService memberService = ServiceFactory.getMemberServiceInstance();
+        IMemberService memberService = ObjectFactory.getServiceInstance("member.service", IMemberService.class);
         try{
             Map<String, Object> resultMap = memberService.split(1, 10, null, null);
             List<Member> list = (List<Member>) resultMap.get("allMembers");
@@ -101,6 +101,5 @@ public class TestJunit {
         }catch(Exception e){
             e.printStackTrace();
         }
-
     }
 }

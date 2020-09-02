@@ -1,6 +1,6 @@
 package com.daopro.test.main;
 
-import com.daopro.factory.ServiceFactory;
+import com.daopro.factory.ObjectFactory;
 import com.daopro.service.IMemberService;
 import com.daopro.vo.Member;
 
@@ -16,7 +16,7 @@ public class TestMain {
         member.setNote("一个帅气的男人");
         member.setEmail("2961363297@qq.com");
         member.setBirthday(new Date());
-        IMemberService memberService = ServiceFactory.getMemberServiceInstance();
+        IMemberService memberService = ObjectFactory.getServiceInstance("member.service", IMemberService.class);
         try{
             System.out.println(memberService.add(member));
         }catch(Exception e){

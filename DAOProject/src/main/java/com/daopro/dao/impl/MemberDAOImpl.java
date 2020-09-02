@@ -176,13 +176,7 @@ public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
 
     @Override
     public Long countMembers() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM member";
-        super.pstmt = super.conn.prepareStatement(sql);
-        ResultSet rs = super.pstmt.executeQuery();
-        if(rs.next()){
-            return rs.getLong(1);
-        }
-        return 0L;
+        return super.getAllCount("member");
     }
 
     @Override
