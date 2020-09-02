@@ -1,4 +1,4 @@
-package com.daopro.test;
+package com.daopro.test.main;
 
 import com.daopro.factory.ServiceFactory;
 import com.daopro.service.IMemberService;
