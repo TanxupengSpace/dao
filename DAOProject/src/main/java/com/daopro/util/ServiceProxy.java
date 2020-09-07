@@ -20,14 +20,14 @@ public class ServiceProxy implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object retObj = null;
         boolean transactionFalg = this.openTrasaction(method.getName()); // 判断是否要紧开启事务处理
-//        if(transactionFalg) {
-//            DatabaseConnection.getConn().setAutoCommit(false);
-//        }
+        if(transactionFalg) {
+            DatabaseConnection.getConn().setAutoCommit(false);
+        }
         try{
             retObj = method.invoke(this.target, args);
-//            if(transactionFalg){
-//                DatabaseConnection.getConn().commit();
-//            }
+            if(transactionFalg){
+                DatabaseConnection.getConn().commit();
+            }
         }catch(Exception e){
             if(transactionFalg){
                 DatabaseConnection.getConn().rollback();

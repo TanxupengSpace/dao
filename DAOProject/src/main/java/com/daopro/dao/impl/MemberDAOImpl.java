@@ -4,12 +4,8 @@ import com.daopro.dao.IMemberDAO;
 import com.daopro.util.AbstractDAO;
 import com.daopro.vo.Member;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
     @Override
@@ -20,17 +16,8 @@ public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
 
     @Override
     public boolean doEdit(Member vo) throws SQLException {
-        String sql = "UPDATE member SET name=?, age=?, email=?, sex=?, birthday=?, note=?, phone=? WHERE mid=?";
-        super.pstmt = super.conn.prepareStatement(sql);
-        super.pstmt.setString(1,vo.getName());
-        super.pstmt.setInt(2,vo.getAge());
-        super.pstmt.setString(3,vo.getEmail());
-        super.pstmt.setString(4,vo.getSex());
-        super.pstmt.setDate(5,new java.sql.Date(vo.getBirthday().getTime()));
-        super.pstmt.setString(6,vo.getNote());
-        super.pstmt.setString(7, vo.getPhone());
-        super.pstmt.setString(8, vo.getMid());
-        return super.pstmt.executeUpdate() > 0;
+        String sql = "UPDATE member SET name=#{name}, age=#{age}, email=#{email}, sex=#{sex}, birthday=#{birthday}, note=#{note}, phone=#{phone} WHERE mid=#{mid}";
+        return super.handleUpdate(sql, vo);
     }
 
     @Override
@@ -52,117 +39,49 @@ public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
 
     @Override
     public Member findById(String mid) throws SQLException {
-        String sql = "SELECT mid, name, age, email, sex, birthday, note, phone FROM member WHERE mid=?";
-        super.pstmt = super.conn.prepareStatement(sql);
-        super.pstmt.setString(1, mid);
-        ResultSet rs = super.pstmt.executeQuery();
-        Member member = null;
-        if(rs.next()){
-            member = new Member();
-            member.setMid(rs.getString(1));
-            member.setName(rs.getString(2));
-            member.setAge(rs.getInt(3));
-            member.setEmail(rs.getString(4));
-            member.setSex(rs.getString(5));
-            member.setBirthday(rs.getDate(6));
-            member.setNote(rs.getString(7));
-            member.setPhone(rs.getString(8));
-        }
-        return member;
+        Map<String, Object> params = new HashMap<>();
+        params.put("mid", mid);
+        String sql = "SELECT mid, name, age, email, sex, birthday, note, phone FROM member WHERE mid=#{mid}";
+        return super.handleSingleObject(sql, params, Member.class);
     }
 
     @Override
     public Member findByPhone(String phone) throws SQLException {
-        String sql = "SELECT mid, name, age, email, sex, birthday, note, phone FROM member WHERE phone=?";
-        super.pstmt = super.conn.prepareStatement(sql);
-        super.pstmt.setString(1, phone);
-        ResultSet rs = super.pstmt.executeQuery();
-        Member member = null;
-        if(rs.next()){
-            member = new Member();
-            member.setMid(rs.getString(1));
-            member.setName(rs.getString(2));
-            member.setAge(rs.getInt(3));
-            member.setEmail(rs.getString(4));
-            member.setSex(rs.getString(5));
-            member.setBirthday(rs.getDate(6));
-            member.setNote(rs.getString(7));
-            member.setPhone(rs.getString(8));
-        }
-        return member;
+        Map<String, Object> params = new HashMap<>();
+        params.put("phone", phone);
+        String sql = "SELECT mid, name, age, email, sex, birthday, note, phone FROM member WHERE phone=#{phone}";
+        return super.handleSingleObject(sql, params, Member.class);
     }
 
     @Override
     public List<Member> findAll() throws SQLException {
-        List<Member> memberList = new ArrayList<>();
+        Map<String, Object> params = new HashMap<>();
         String sql = "SELECT mid, name, age, email, sex, birthday, note, phone FROM member";
-        super.pstmt = super.conn.prepareStatement(sql);
-        ResultSet rs = super.pstmt.executeQuery();
-        while(rs.next()){
-            Member member = new Member();
-            member.setMid(rs.getString(1));
-            member.setName(rs.getString(2));
-            member.setAge(rs.getInt(3));
-            member.setEmail(rs.getString(4));
-            member.setSex(rs.getString(5));
-            member.setBirthday(rs.getDate(6));
-            member.setNote(rs.getString(7));
-            member.setPhone(rs.getString(8));
-            memberList.add(member);
-        }
-        return memberList;
+        return super.handleSigleObjectList(sql, params, Member.class);
     }
 
     @Override
     public List<Member> findSplit(Integer currentPage, Integer lineSize) throws SQLException {
-        List<Member> memberList = new ArrayList<>();
+        Map<String, Object> params = new HashMap<>();
+        params.put("line", currentPage * lineSize);
+        params.put("star", (currentPage - 1) * lineSize);
         String sql = "SELECT * FROM (" +
-                " SELECT mid, name, age, email, sex, birthday, note, phone, ROWNUM rn FROM member WHERE ROWNUM <=?)" +
-                " temp WHERE temp.rn >=?";
-        super.pstmt = super.conn.prepareStatement(sql);
-        super.pstmt.setInt(1, currentPage * lineSize);
-        super.pstmt.setInt(2, (currentPage - 1) * lineSize);
-        ResultSet rs = super.pstmt.executeQuery();
-        while(rs.next()){
-            Member member = new Member();
-            member.setMid(rs.getString(1));
-            member.setName(rs.getString(2));
-            member.setAge(rs.getInt(3));
-            member.setEmail(rs.getString(4));
-            member.setSex(rs.getString(5));
-            member.setBirthday(rs.getDate(6));
-            member.setNote(rs.getString(7));
-            member.setPhone(rs.getString(8));
-            memberList.add(member);
-        }
-        return memberList;
+                " SELECT mid, name, age, email, sex, birthday, note, phone, ROWNUM rn FROM member WHERE ROWNUM <=#{line})" +
+                " temp WHERE temp.rn >=#{star}";
+        return super.handleSigleObjectList(sql, params, Member.class);
     }
 
     @Override
     public List<Member> findSplit(Integer currentPage, Integer lineSize, String column, String keyWord) throws SQLException {
-        List<Member> memberList = new ArrayList<>();
+        Map<String, Object> params = new HashMap<>();
+        params.put("keyword", "%" + keyWord + "%");
+        params.put("line", currentPage * lineSize);
+        params.put("star", (currentPage - 1) * lineSize);
         String sql = "SELECT * FROM (" +
                 " SELECT mid, name, age, email, sex, birthday, note, phone, ROWNUM rn FROM member WHERE " +
-                column + " LIKE ? AND ROWNUM <=?)" +
-                " temp WHERE temp.rn >=?";
-        super.pstmt = super.conn.prepareStatement(sql);
-        super.pstmt.setString(1, "%" + keyWord + "%");
-        super.pstmt.setInt(2, currentPage * lineSize);
-        super.pstmt.setInt(3, (currentPage - 1) * lineSize);
-        ResultSet rs = super.pstmt.executeQuery();
-        while(rs.next()){
-            Member member = new Member();
-            member.setMid(rs.getString(1));
-            member.setName(rs.getString(2));
-            member.setAge(rs.getInt(3));
-            member.setEmail(rs.getString(4));
-            member.setSex(rs.getString(5));
-            member.setBirthday(rs.getDate(6));
-            member.setNote(rs.getString(7));
-            member.setPhone(rs.getString(8));
-            memberList.add(member);
-        }
-        return memberList;
+                column + " LIKE #{keyword} AND ROWNUM <=#{line})" +
+                " temp WHERE temp.rn >=#{star}";
+        return super.handleSigleObjectList(sql, params, Member.class);
     }
 
     @Override
@@ -172,13 +91,9 @@ public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
 
     @Override
     public Long countMembers(String column, String keyWord) throws SQLException{
-        String sql = "SELECT COUNT(*) FROM member WHERE " + column + " LIKE ?";
-        super.pstmt = super.conn.prepareStatement(sql);
-        super.pstmt.setString(1,"%" + keyWord + "%");
-        ResultSet rs = super.pstmt.executeQuery();
-        if(rs.next()){
-            return rs.getLong(1);
-        }
-        return 0L;
+        Map<String, Object> params = new HashMap<>();
+        params.put("keyWord", "%" + keyWord + "%");
+        String sql = "SELECT COUNT(*) FROM member WHERE " + column + " LIKE #{keyWord}";
+        return super.handleSingleObject(sql, params, Member.class);
     }
 }

@@ -10,7 +10,7 @@ public class DatabaseConnection {
     private static final String DBDRIVER = "oracle.jdbc.driver.OracleDriver";
     private static final String DBURL = "jdbc:oracle:thin:@localhost:1521:ORCL";
     private static final String DBUSER = "c##tanxupeng";
-    private static final String DBPASSWORD = "19930716_Tan";
+    private static final String DBPASSWORD = "password_pwd";
     private static final ThreadLocal<Connection> CONNECTION_THREAD_LOCAL = new ThreadLocal<>();
     /**
      * 初始化数据库连接驱动服务
