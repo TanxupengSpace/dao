@@ -14,17 +14,8 @@ import java.util.Set;
 public class MemberDAOImpl extends AbstractDAO implements IMemberDAO {
     @Override
     public boolean doCreate(Member vo) throws SQLException {
-        String sql = "INSERT INTO member(mid, name, age, email, sex, birthday, note, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        super.pstmt = super.conn.prepareStatement(sql);
-        super.pstmt.setString(1, vo.getMid());
-        super.pstmt.setString(2,vo.getName());
-        super.pstmt.setInt(3,vo.getAge());
-        super.pstmt.setString(4,vo.getEmail());
-        super.pstmt.setString(5,vo.getSex());
-        super.pstmt.setDate(6,new java.sql.Date(vo.getBirthday().getTime()));
-        super.pstmt.setString(7,vo.getNote());
-        super.pstmt.setString(8, vo.getPhone());
-        return super.pstmt.executeUpdate() > 0;
+        String sql = "INSERT INTO member(mid, name, age, email, sex, birthday, note, phone) VALUES (#{mid}, #{name}, #{age}, #{email}, #{sex}, #{birthday}, #{note}, #{phone})";
+        return super.handleUpdate(sql, vo);
     }
 
     @Override
